@@ -1,2 +1,2 @@
 # MetCompA
- Material Gerado na cadeira de Métodos Computacionais da Física A
+ Material Gerado nas cadeiras de Métodos Computacionais da Física
