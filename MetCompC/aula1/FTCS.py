@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 def ftcs(x0, xf, D, dx, dt, tf):
     f = lambda xi, ti: (1/np.sqrt(4 * np.pi * D * ti)) * np.exp(-(xi**2)/(4 * D * ti))
     k = (D * dt)/(dx**2)
-    x = list(np.arange(dx, xf, dx))
+    x = list(np.arange(x0, xf+dx, dx))
     ftemp = np.zeros(len(x))
     ftemp[0] = 1.
     fxt = np.zeros(len(x))
@@ -37,8 +37,10 @@ dx = 1
 dt = 0.25
 tf = 400
 
+x, y = ftcs(x0, xf, D, dx, dt, tf)
+
 plt.figure(1)
-plt.scatter(ftcs(x0, xf, D, dx, dt, tf)[0], ftcs(x0, xf, D, dx, dt, tf)[1], marker='.', c='k')
+plt.scatter(x, y, marker='.', c='k')
 plt.grid()
 plt.title(f'Equação da difusão por FTCS\nk = {(D * dt)/(dx**2)} | t = {tf}')
 plt.xlabel('x')
