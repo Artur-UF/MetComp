@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 
 
 def ftcs(x0, xf, D, dx, dt, tf):
-    f = lambda xi, ti: (1/np.sqrt(4 * np.pi * D * ti)) * np.exp(-(xi**2)/(4 * D * ti))
     k = (D * dt)/(dx**2)
     x = list(np.arange(x0, xf+dx, dx))
     ftemp = np.zeros(len(x))
