@@ -3,7 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def thomas(aa, bb, cc, dd):
+def thomasexp(k, s, dd):
+    # Criação dos arrays
+    aa = np.ones(s) * k
+    cc = np.ones(s) * k
+    bb = np.ones(s) * (2 - (2 * k))
+
+    # Corte dos arrays
     a = copy.deepcopy(aa[1:-1])
     b = copy.deepcopy(bb[1:-1])
     c = copy.deepcopy(cc[1:-1])
@@ -33,21 +39,19 @@ def thomas(aa, bb, cc, dd):
     return x
 
 
-def thomas2(k, s, dd):
-    '''
-    dd: o array inicial a ser retroalimentado com o retorno
-    s: tamanho do array do eixo x utilizado
-    k: constante
-    '''
+def cranknic(k, s, dd):
+    # Realiza o processo explícito
+    d2 = thomasexp(k, s, dd)
+
     # Criação dos arrays
     aa = np.ones(s) * (-k)
     cc = np.ones(s) * (-k)
-    bb = np.ones(s) * (1 + (2 * k))
+    bb = np.ones(s) * (2 + (2 * k))
 
     a = copy.deepcopy(aa[1:-1])
     b = copy.deepcopy(bb[1:-1])
     c = copy.deepcopy(cc[1:-1])
-    d = copy.deepcopy(dd[1:-1])
+    d = copy.deepcopy(d2[1:-1])
     a[0] = 0
     c[-1] = 0
 
@@ -73,54 +77,25 @@ def thomas2(k, s, dd):
     return x
 
 
-k = .4
 dx = 1
 dt = .25
-xf = 100
-tf = [5, 50, 500, 1000, 2000]
+xf = 10
+tf = .5 # [0, 50, 500, 1000, 2000]
+k = .4
 x = np.arange(0, xf, dx)
 
-
-a = np.ones(len(x)) * (-k)
-c = np.ones(len(x)) * (-k)
-b = np.ones(len(x)) * (1 + (2 * k))
 d = np.zeros(len(x))
+# Condição inicial
 d[int(len(d) / 4):int((3 * len(d)) / 4)] = 1.
 
-plt.figure(1)
-for time in tf:
-    t = np.arange(0, time, dt)
-    for ti in t:
-        y = thomas(a, b, c, d)
-        d = y
-    plt.plot(x, d, label=f't = {time}')
-
+#for time in tf:
+t = np.arange(0, tf, dt)
+for ti in t:
+    y = cranknic(k, len(x), d)
+    d = y
+plt.plot(x, d, label=f't = {tf}')
 plt.grid()
 plt.legend()
-plt.title(f'Algoritmo de Thomas\nk = {k}')
-plt.ylabel('f(x, t)')
-plt.xlabel('x')
-plt.savefig('thomas.png')
-
-# Plot com a segunda função
-x2 = np.arange(0, 100, 1)
-
-d2 = np.zeros(len(x2))
-# Condição inicial
-d2[int(len(d2) / 4):int((3 * len(d2)) / 4)] = 1.
-
-plt.figure(2)
-for time in tf:
-    t2 = np.arange(0, time, .25)
-    for ti in t2:
-        y = thomas2(.4, len(x2), d2)
-        d2 = y
-    plt.plot(x2, d2, label=f't = {time}')
-plt.grid()
-plt.legend()
-plt.title(f'Algoritmo de Thomas\nk = {k}')
-plt.ylabel('f(x, t)')
-plt.xlabel('x')
+plt.title(f'Crank-Nicolson\nk = {k}')
+plt.ylim(-0.1, 1.1)
 plt.show()
-
-
