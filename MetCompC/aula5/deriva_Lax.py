@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as st
 
 
-def ftcs_mtz(n, u, d):
+def met_lax(n, u, d):
     # Montando a matriz
     a = (1 + u)/2
     c = (1 - u)/2
@@ -15,8 +15,6 @@ def ftcs_mtz(n, u, d):
     # Arrumando a matriz
     mtz[0][-1] = a
     mtz[-1][0] = c
-
-    #M = np.linalg.inv(mtz)
 
     fxt = np.dot(mtz, d)
     return fxt
@@ -34,7 +32,7 @@ d = st.norm.pdf(x, loc=40, scale=5)
 
 t = np.arange(0, tf, dt)
 for ti in t:
-    y = ftcs_mtz(n, u, d)
+    y = met_lax(n, u, d)
     d = y
     plt.plot(x, d)
     plt.plot(x, d)

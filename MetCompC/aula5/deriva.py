@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as st
 
 
-def ftcs_mtz(n, u, d):
+def ftcs_imp(n, u, d):
     # Montando a matriz
     a = -u/2
     c = u/2
@@ -34,7 +34,7 @@ d = st.norm.pdf(x, loc=40, scale=5)
 
 t = np.arange(0, tf, dt)
 for ti in t:
-    y = ftcs_mtz(n, u, d)
+    y = ftcs_imp(n, u, d)
     d = y
     plt.plot(x, d)
     plt.plot(x, d)

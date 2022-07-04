@@ -1,5 +1,4 @@
 import scipy.stats as st
-import itertools
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
