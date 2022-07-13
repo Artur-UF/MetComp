@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 from random import uniform
 
 
@@ -67,10 +68,10 @@ class Particle:
             ax.add_patch(circ)
 
 
-def dinmol(l, r, tf, dt, ci='Random'):
+def dinmol(l, r, ci='Random'):
     n = l//(2*r)
     # Largura da distribuição de velocidades
-    dsv = 1
+    dsv = .7
 
     if ci == 'Random':
         # Distribuição uniforme de posições e distribuição normal de velocidades
@@ -95,30 +96,44 @@ def dinmol(l, r, tf, dt, ci='Random'):
             i += 1
             x = np.arange(i*r, l-(i-1)*r, 2*r)
 
-    ec = []
-    # Assumindo que m = 1
-    for i in particulas:
-        vx = i.vel[0]
-        vy = i.vel[1]
-        vq = (vx**2) + (vy**2)
-        ec.append(vq/2)
-    ecmed = sum(ec)/len(ec)
+    return particulas
 
-    fig, ax = plt.subplots()
 
+def gen():
+    l = 10
+    r = 1
+    ci = 'Random'
+    tf = 20
+    dt = 0.1
+    dinmol(l, r, ci)
     t = np.arange(0, tf, dt)
     for ti in t:
-        Particle.plot(ax)
-        Particle.run_elast(dt, l)
-        ax.set_xlim(0, l)
-        ax.set_ylim(0, l)
-        ax.set_title(f'Dinâmica Molecular\n t = {ti:>4.1f}')
-        plt.pause(.1)
-        plt.cla()
+        yield Particle.todas, ti, l, r
+        Particle.run_pbc(dt, l)
 
 
-dinmol(10, 1, 10, .1, ci='Triangulo')
+fig, ax = plt.subplots()
 
 
+def init():
+    '''
+    É o inicio de todo frame após o 'run'
+    '''
+    ax.clear()
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
 
 
+def run(i):
+    partics, t, l, r = i
+    ax.set_xlim(-r, l + r)
+    ax.set_ylim(-r, l + r)
+    Particle.plot(ax)
+    ax.set_title(f'Dinâmica Molecular\nt = {t:>4.1f}')
+
+
+ani = animation.FuncAnimation(fig, run, gen, interval=200, init_func=init, save_count=1500)
+#plt.show()
+writergif = animation.PillowWriter(fps=30)
+ani.save(r'D:\Aplicações\GItHub D\MetCompA\MetCompC\aula7\moleculas_pbc.gif', writer=writergif)
+plt.close()
