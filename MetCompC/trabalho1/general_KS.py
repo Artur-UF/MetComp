@@ -25,11 +25,11 @@ def KS_eq(l, eta, dx, tf, dt, fxt):
         plt.cla()
 
 
-l = 50
-eta = 0.25
+l = 35
+eta = 0.26
 dx = 1
-tf = 40
-dt = 0.1
+tf = 25
+dt = .1
 
 x = np.arange(0, l, dx)
 

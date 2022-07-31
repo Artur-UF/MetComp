@@ -113,10 +113,13 @@ def molas_acop(n, r0, xa, ya, vax, vay, r, tf, dt):
                          f12(parts[0].pos[0], parts[0].pos[1], parts[1].pos[0], parts[1].pos[1])) *
                         (dx(0, parts[0].pos[0])/dp(0, 0, parts[0].pos[0], parts[0].pos[1])) * dt) / 2
     parts[0].vel[1] += ((f1p(parts[0].pos[0], parts[0].pos[1], parts[1].pos[0], parts[1].pos[1]) +
-                         f12(parts[0].pos[0], parts[0].pos[1], parts[1].pos[0], parts[1].pos[1])) *
+                        f12(parts[0].pos[0], parts[0].pos[1], parts[1].pos[0], parts[1].pos[1])) *
                         (dy(0, parts[0].pos[1]) / dp(0, 0, parts[0].pos[0], parts[0].pos[1])) * dt) / 2
     ''' Tu parou aqui adaptando para vx e vy'''
-    parts[-1].vel[0] += ((f2p(parts[-2].pos[0], parts[-1].pos[0]) + f21(parts[-2].pos[0], parts[-1].pos[0])) * dt) / 2
+    parts[-1].vel[0] += (((f2p(parts[-2].pos[0], parts[-2].pos[1], parts[-1].pos[0], parts[-1].pos[1]) +
+                        f21(parts[-2].pos[0], parts[-2].pos[1]), parts[-1].pos[0], parts[-1].pos[1])) *
+                        (dx(parts[-1].pos[0], (n + 1) * r0)/dp('''aqui!!!''')) dt) / 2
+
 
     # Meio do sistema
     for i in range(1, n - 1):
