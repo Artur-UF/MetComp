@@ -30,7 +30,7 @@ def shrodinger(n, dt, tf, hb, m, xf, dx, psi):
         psi = np.dot(g, psi)
         plt.plot(x, np.real(psi), 'r', label='Real')
         plt.plot(x, np.imag(psi), 'b', label='Imagnária')
-        plt.ylim(-.001, .001)
+        plt.ylim(-.1, .1)
         plt.xlim(0, xf)
         plt.grid()
         plt.legend()
@@ -53,7 +53,7 @@ m = 1
 sigma = 10
 k0 = .5
 x0 = 150
-psi = (np.exp(1j * k0 * x) * np.exp((-(x-x0)**2))/(2 * sigma**2))/(np.sqrt(sigma * np.sqrt(np.pi)))
-#psi = d = st.norm.pdf(x, loc=150, scale=10) # Um pacote gaussiano usando uma Gaussiana
+#psi = (np.exp(1j * k0 * x) * np.exp((-(x-x0)**2))/(2 * sigma**2))/(np.sqrt(sigma * np.sqrt(np.pi)))
+psi = d = st.norm.pdf(x, loc=150, scale=10) # Um pacote gaussiano usando uma Gaussiana
 
 shrodinger(n, dt, tf, hb, m, xf, dx, psi)
