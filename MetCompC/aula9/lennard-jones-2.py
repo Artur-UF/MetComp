@@ -49,6 +49,7 @@ class Particle:
         n = len(p)
         for i in p:
             i.forc = [0, 0]
+            i.pot = 0
         for pi in range(n):
             for pj in range(0, n):
                 if pi != pj:
