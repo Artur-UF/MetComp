@@ -69,7 +69,7 @@ class Particle:
 
                 dy = p[pi].pos[1] - p[pj].pos[1]
                 if abs(dy) > l/2:
-                    if dx < 0:
+                    if dy < 0:
                         delta = l/2 - abs(dy)
                         dy = l/2 + delta
                     else:
@@ -101,11 +101,11 @@ class Particle:
     @classmethod
     def plot(cls, ax):
         c = 1
-        #cores = ['k', 'b', 'g', 'pink', 'w', 'c', 'm', 'y', 'r']
         for p in Particle.todas:
             circ = plt.Circle(p.pos, p.raio, facecolor='k', edgecolor='red')
-            #circ = plt.Circle(p.pos, p.raio,color=cores[c-1], label=c)
-            #c += 1
+            '''cores = ['k', 'b', 'g', 'pink', 'w', 'c', 'm', 'y', 'r']
+            circ = plt.Circle(p.pos, p.raio,color=cores[c-1], label=c)
+            c += 1'''
             ax.add_patch(circ)
 
     @classmethod
@@ -146,7 +146,8 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
 
     particulas = []
 
-    if ci == 'Random':
+    # Inicializações
+    if ci == 'Random':  # Sobreposição não tratada
         # Distribuição uniforme de posições e distribuição normal de velocidades
         for i in range(n ** 2):
             particulas.append([Particle(r, [uniform(r, l - r), uniform(r, l - r)],
@@ -155,8 +156,8 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
 
     if ci == 'Quadrado':
         aresta = (2 * r * n) + ((n + 1) * di)
-        xx = np.arange((l - aresta)//2, (l + aresta)/2, 2 * r + di)
-        yy = np.arange((l - aresta)//2, (l + aresta)/2, 2 * r + di)
+        xx = np.arange((l - aresta)/2, (l + aresta)/2, 2 * r + di)
+        yy = np.arange((l - aresta)/2, (l + aresta)/2, 2 * r + di)
         for y in range(n):
             for x in range(n):
                 particulas.append(Particle(r, [xx[x], yy[y]],
@@ -164,17 +165,18 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
                                             maxwell.rvs(size=1, scale=a)[0] * (1 - (2 * np.random.randint(2)))]))
 
     if ci == 'Triangulo':
+        ''' Como que centraliza??? '''
         i = -1
         aresta = (2 * r * n) + ((n + 1) * di)
-        xx = np.arange((l - aresta)//2, (l + aresta)/2, 2 * r + di)
-        yy = np.arange((l - aresta)//2, (l + aresta)/2, (2 * r + di) * (np.sqrt(3)/2))
+        xx = np.arange((l - aresta)/2, (l + aresta)/2, 2 * r + di)
+        yy = np.arange((l - aresta)/2, (l + aresta)/2, (2 * r + di) * (np.sqrt(3)/2))
         for y in range(n):
             for x in range(n):
                 particulas.append(Particle(r, [xx[x], yy[y]],
                                            [maxwell.rvs(size=1, scale=a)[0] * (1 - (2 * np.random.randint(2))),
                                             maxwell.rvs(size=1, scale=a)[0] * (1 - (2 * np.random.randint(2)))]))
             i *= -1
-            xx = np.arange((l - aresta)//2 + ((1 + i)/2) * (r + di/2), (l + aresta)/2, 2 * r + di)
+            xx = np.arange((l - aresta)/2 + ((1 + i)/2) * (r + di/2), (l + aresta)/2, 2 * r + di)
 
     # Integração
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
@@ -209,20 +211,20 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
             # Total
             ax2.scatter(t, tot, marker='_', color='k')
 
-        fig.suptitle(f'Potencial Lennard-Jones\nt = {t:>3.1f}')
+        fig.suptitle(f'Potencial Lennard-Jones\nPassos = {c:>5} | t = {t:>3.1f}')
         plt.pause(0.0001)
         ax1.cla()
 
 
 l = 10
-n = 5
+n = 9
 r = .3
-di = .5
+di = .4
 eps = 1
 sig = 1
-T = .5
-tf = 10
-dt = .007
+T = .7
+tf = 15
+dt = .01
 ci = 'Quadrado'
 
 dinmol(l, n, r, di, eps, sig, T, tf, dt, ci)
