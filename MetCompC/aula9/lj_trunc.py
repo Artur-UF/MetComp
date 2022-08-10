@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from random import uniform
 from scipy.stats import maxwell
+import time
 
 np.random.seed(123486789)
 
@@ -155,7 +156,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
                                          maxwell.rvs(size=1, scale=a)[0] * (1 - (2 * np.random.randint(2)))])])
 
     if ci == 'Quadrado':
-        aresta = (2 * r * n) + ((n + 1) * di)
+        aresta = (2 * r * n) + ((n - 1) * di)
         xx = np.arange((l - aresta)/2, (l + aresta)/2, 2 * r + di)
         yy = np.arange((l - aresta)/2, (l + aresta)/2, 2 * r + di)
         for y in range(n):
@@ -167,7 +168,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
     if ci == 'Triangulo':
         ''' Como que centraliza??? '''
         i = -1
-        aresta = (2 * r * n) + ((n + 1) * di)
+        aresta = (2 * r * n) + ((n - 1) * di)
         xx = np.arange((l - aresta)/2, (l + aresta)/2, 2 * r + di)
         yy = np.arange((l - aresta)/2, (l + aresta)/2, (2 * r + di) * (np.sqrt(3)/2))
         for y in range(n):
@@ -191,6 +192,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
 
     # Resto dos passos
     c = 0
+    K, U, Tot, time = [], [], [], []
     for t in np.arange(0, tf, dt):
         c += 1
         # Dinâmica
@@ -198,20 +200,28 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
         Particle.plot(ax1)
         ax1.set_xlim(0, l)
         ax1.set_ylim(0, l)
+        ax1.set_title(f'Partículas | n = {len(particulas)}')
 
         if c % 10 == 0:
             cin, pot, tot = Particle.energias()
+            K.append(cin)
+            U.append(pot)
+            Tot.append(tot)
+            time.append(t)
             # Cinetica
-            ax2.scatter(t, cin,  marker='+', color='r', s=30)
+            ax2.plot(time, K,  marker='+', color='r', linewidth=.1)
             ax2.set_title('Energias')
+            ax2.set(xlabel='t', ylabel='E')
 
             # Potencial
-            ax2.scatter(t, pot,  marker='^', color='b', s=30)
+            ax2.plot(time, U,  marker='^', color='b', linewidth=.1)
 
             # Total
-            ax2.scatter(t, tot, marker='_', color='k')
+            ax2.plot(time, Tot, marker='*', color='k', linewidth=.1)
 
         fig.suptitle(f'Potencial Lennard-Jones\nPassos = {c:>5} | t = {t:>3.1f}')
+        if t == tf-dt:
+            fig.savefig('MD_LJ.png')
         plt.pause(0.0001)
         ax1.cla()
 
@@ -222,9 +232,11 @@ r = .3
 di = .4
 eps = 1
 sig = 1
-T = .7
-tf = 15
+T = .5
+tf = 10
 dt = .01
-ci = 'Quadrado'
-
+ci = 'Triangulo'
+start = time.time()
 dinmol(l, n, r, di, eps, sig, T, tf, dt, ci)
+end = time.time()
+print(f'Tempo de execução: {end - start}s')
