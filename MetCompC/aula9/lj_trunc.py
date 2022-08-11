@@ -7,6 +7,29 @@ import time
 np.random.seed(123486789)
 
 
+def immin(x1, y1, x2, y2, l):
+    # Imagem mínima
+    dx = x1 - x2
+    if abs(dx) > l / 2:
+        if dx < 0:
+            delta = l / 2 - abs(dx)
+            dx = l / 2 + delta
+        else:
+            delta = l / 2 - abs(dx)
+            dx = -l / 2 - delta
+
+    dy = y1 - y2
+    if abs(dy) > l / 2:
+        if dy < 0:
+            delta = l / 2 - abs(dy)
+            dy = l / 2 + delta
+        else:
+            delta = l / 2 - abs(dy)
+            dy = -l / 2 - delta
+
+    return dx, dy
+
+
 class Particle:
     todas = []
 
@@ -58,25 +81,7 @@ class Particle:
 
         for pi in range(n):
             for pj in range(pi + 1, n):
-                # Imagem mínima
-                dx = p[pi].pos[0] - p[pj].pos[0]
-                if abs(dx) > l/2:
-                    if dx < 0:
-                        delta = l/2 - abs(dx)
-                        dx = l/2 + delta
-                    else:
-                        delta = l/2 - abs(dx)
-                        dx = -l/2 - delta
-
-                dy = p[pi].pos[1] - p[pj].pos[1]
-                if abs(dy) > l/2:
-                    if dy < 0:
-                        delta = l/2 - abs(dy)
-                        dy = l/2 + delta
-                    else:
-                        delta = l/2 - abs(dy)
-                        dy = -l/2 - delta
-
+                dx, dy = immin(p[pi].pos[0], p[pi].pos[1], p[pj].pos[0], p[pj].pos[1], l)
                 if np.hypot(dx, dy) <= rc:
                     # Cálculo das forças
                     fxi = Aij(np.hypot(dx, dy)) * dx
@@ -98,6 +103,67 @@ class Particle:
                     p[pi].pot += poti
                     p[pj].pot += potj
 
+    @classmethod
+    def energias(cls, cond='Particula'):
+        k = 0
+        pot = 0
+        n = len(Particle.todas)
+        if cond == 'Sistema':
+            for p in Particle.todas:
+                k += (np.hypot(p.vel[0], p.vel[1]) ** 2) / 2
+                pot += p.pot
+            tot = k + pot
+            return k, pot, tot
+        else:
+            for p in Particle.todas:
+                k += (np.hypot(p.vel[0], p.vel[1]) ** 2) / 2
+                pot += p.pot
+            tot = k + pot
+            return k / n, pot / n, tot / n
+
+    @classmethod
+    def rdf(cls, l, switch=0, ngr=0, g=(), size=2):
+        p = Particle.todas
+        n = len(p)
+        '''
+        Se for só uma usa esse aqui
+        # Seleção da partícula central
+        pc = p[0]
+        for i in range(n):
+            delr = np.hypot(p[i].pos[0] - l / 2, p[i].pos[1] - l / 2)
+
+            delrc = np.hypot(pc.pos[0] - l / 2, pc.pos[1] - l / 2)
+            if delr < delrc:
+                pc = p[i]
+        '''
+        bins = l * size
+        tambin = l/(2 * bins)
+        rho = n / (l ** 2)
+        if switch == 0:
+            g = np.zeros(bins)
+            return ngr, g
+
+        if switch == 1:
+            ngr += 1
+            for i in range(n):
+                for j in range(i + 1, n):
+                    dx, dy = immin(p[i].pos[0], p[i].pos[1], p[j].pos[0], p[j].pos[1], l)
+                    r = np.hypot(dx, dy)
+                    if r <= l/2:
+                        ig = int(r//tambin)
+                        g[ig] += 2
+            return ngr, g
+
+        if switch == 2:
+            for i in range(bins):
+                vb = (((i + 1)**2) - (i**2)) * (tambin**2)
+                npar = np.pi * vb * rho
+                g[i] /= ngr * n * npar
+
+            return g
+
+
+
 
     @classmethod
     def plot(cls, ax):
@@ -116,16 +182,6 @@ class Particle:
         for p in Particle.todas:
             print(f'{c:<2}| [{p.pos[0]:<3.1f}, {p.pos[1]:<3.1f}] | {p.forc}')
             c += 1
-
-    @classmethod
-    def energias(cls):
-        k = 0
-        pot = 0
-        for p in Particle.todas:
-            k += (np.hypot(p.vel[0], p.vel[1])**2)/2
-            pot += p.pot
-        tot = k + pot
-        return k, pot, tot
 
 
 def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
@@ -192,7 +248,8 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
 
     # Resto dos passos
     c = 0
-    K, U, Tot, time = [], [], [], []
+    k, u, tot, time = [], [], [], []
+    ngr, g = Particle.rdf(l, switch=0, size=10)
     for t in np.arange(0, tf, dt):
         c += 1
         # Dinâmica
@@ -202,28 +259,43 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
         ax1.set_ylim(0, l)
         ax1.set_title(f'Partículas | n = {len(particulas)}')
 
+        # RDF
+        if t > tf/2:
+            ngr, g = Particle.rdf(l, switch=1, ngr=ngr, g=g, size=10)
+
+        # Energias
         if c % 10 == 0:
-            cin, pot, tot = Particle.energias()
-            K.append(cin)
-            U.append(pot)
-            Tot.append(tot)
+            cin, pot, to = Particle.energias(cond='Particulas')
+            k.append(cin)
+            u.append(pot)
+            tot.append(to)
             time.append(t)
             # Cinetica
-            ax2.plot(time, K,  marker='+', color='r', linewidth=.1)
+            ax2.plot(time, k,  marker='+', color='r', linewidth=.1)
             ax2.set_title('Energias')
-            ax2.set(xlabel='t', ylabel='E')
+            ax2.set(xlabel='t', ylabel='E/n')
 
             # Potencial
-            ax2.plot(time, U,  marker='^', color='b', linewidth=.1)
+            ax2.plot(time, u,  marker='^', color='b', linewidth=.1)
 
             # Total
-            ax2.plot(time, Tot, marker='*', color='k', linewidth=.1)
+            ax2.plot(time, tot, marker='*', color='k', linewidth=.1)
 
-        fig.suptitle(f'Potencial Lennard-Jones\nPassos = {c:>5} | t = {t:>3.1f}')
+        fig.suptitle(f'Potencial Lennard-Jones\nPassos = {c:>5} | dt = {dt} | t = {t:>3.1f}')
         if t == tf-dt:
-            fig.savefig('MD_LJ.png')
+            fig.savefig(f'MD_lj_'+str(dt)[2:]+'.png')
         plt.pause(0.0001)
         ax1.cla()
+
+    g = Particle.rdf(l, switch=2, ngr=ngr, g=g, size=10)
+    rs = np.linspace(0, l/2, len(g))
+    plt.figure(4)
+    plt.plot(rs, g)
+    plt.title(f'Função de Distribuição Radial\nn = {n**2} | Ti = {T}')
+    plt.xlabel('r')
+    plt.ylabel('g(r)')
+    plt.grid()
+    plt.savefig('RDF.png')
 
 
 l = 10
@@ -233,10 +305,14 @@ di = .4
 eps = 1
 sig = 1
 T = .5
-tf = 10
-dt = .01
+tf = 5
+dt = .005
 ci = 'Triangulo'
 start = time.time()
 dinmol(l, n, r, di, eps, sig, T, tf, dt, ci)
 end = time.time()
 print(f'Tempo de execução: {end - start}s')
+
+'''
+Essa energia total tá certa?
+'''
