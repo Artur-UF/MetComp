@@ -1,0 +1,13 @@
+-*- Dinâmica Molecular -*-
+l = 10
+n = 10
+r = 0.3
+di = 0.4
+eps = 1
+sig = 1
+T = 0.5
+tf = 10
+dt = 0.005
+ci = Triangulo
+Pressão = 64.55
+Tempo de execução = 607.14s

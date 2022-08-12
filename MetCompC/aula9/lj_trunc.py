@@ -32,6 +32,7 @@ def immin(x1, y1, x2, y2, l):
 
 class Particle:
     todas = []
+    pressao = 0
 
     def __init__(self, r, p, v):
         self.raio = r
@@ -103,6 +104,17 @@ class Particle:
                     p[pi].pot += poti
                     p[pj].pot += potj
 
+                    # Cálculo da pressão
+                    Particle.pressao += np.hypot(fxi, fyi) * np.hypot(dx, dy)
+
+    @classmethod
+    def calcpressao(cls, T, num, l):
+        m = 1
+        kb = 1
+        v = l**2
+        rho = (m * len(Particle.todas))/v
+        return rho * kb * T + ((Particle.pressao/num)/v)
+
     @classmethod
     def energias(cls, cond='Particula'):
         k = 0
@@ -125,17 +137,6 @@ class Particle:
     def rdf(cls, l, switch=0, ngr=0, g=(), size=2):
         p = Particle.todas
         n = len(p)
-        '''
-        Se for só uma usa esse aqui
-        # Seleção da partícula central
-        pc = p[0]
-        for i in range(n):
-            delr = np.hypot(p[i].pos[0] - l / 2, p[i].pos[1] - l / 2)
-
-            delrc = np.hypot(pc.pos[0] - l / 2, pc.pos[1] - l / 2)
-            if delr < delrc:
-                pc = p[i]
-        '''
         bins = l * size
         tambin = l/(2 * bins)
         rho = n / (l ** 2)
@@ -159,11 +160,7 @@ class Particle:
                 vb = (((i + 1)**2) - (i**2)) * (tambin**2)
                 npar = np.pi * vb * rho
                 g[i] /= ngr * n * npar
-
             return g
-
-
-
 
     @classmethod
     def plot(cls, ax):
@@ -196,6 +193,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
     dt: delta tempo
     ci: condições de inicialização ; Triangulo, Quadrado, Random
     '''
+    start = time.time()
     # Largura da distribuição de velocidades
     kb = 1
     m = 1
@@ -248,7 +246,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
 
     # Resto dos passos
     c = 0
-    k, u, tot, time = [], [], [], []
+    k, u, tot, tempo = [], [], [], []
     ngr, g = Particle.rdf(l, switch=0, size=10)
     for t in np.arange(0, tf, dt):
         c += 1
@@ -269,17 +267,17 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
             k.append(cin)
             u.append(pot)
             tot.append(to)
-            time.append(t)
+            tempo.append(t)
             # Cinetica
-            ax2.plot(time, k,  marker='+', color='r', linewidth=.1)
+            ax2.plot(tempo, k,  marker='+', color='r', linewidth=.1)
             ax2.set_title('Energias')
             ax2.set(xlabel='t', ylabel='E/n')
 
             # Potencial
-            ax2.plot(time, u,  marker='^', color='b', linewidth=.1)
+            ax2.plot(tempo, u,  marker='^', color='b', linewidth=.1)
 
             # Total
-            ax2.plot(time, tot, marker='*', color='k', linewidth=.1)
+            ax2.plot(tempo, tot, marker='*', color='k', linewidth=.1)
 
         fig.suptitle(f'Potencial Lennard-Jones\nPassos = {c:>5} | dt = {dt} | t = {t:>3.1f}')
         if t == tf-dt:
@@ -297,21 +295,27 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
     plt.grid()
     plt.savefig('RDF.png')
 
+    pressao = Particle.calcpressao(T, c, l)
+    end = time.time()
+    exec = end - start
+    ark = open('MD_info.txt', 'w', encoding='utf-8')
+    ark.write(f'-*- Dinâmica Molecular -*-\n'
+              f'l = {l}\nn = {n}\nr = {r}\ndi = {di}\neps = {eps}\nsig = {sig}\nT = {T}\ntf = {tf}\ndt = {dt}\n'f'ci = {ci}\n'
+              f'Pressão = {pressao:.2f}\nDensidade = {len(particulas)/(l**2):.2f}m^-2\nTempo de execução = {exec:.2f}s')
+    ark.close()
+
 
 l = 10
-n = 9
+n = 10
 r = .3
 di = .4
 eps = 1
 sig = 1
 T = .5
-tf = 5
+tf = 10
 dt = .005
 ci = 'Triangulo'
-start = time.time()
 dinmol(l, n, r, di, eps, sig, T, tf, dt, ci)
-end = time.time()
-print(f'Tempo de execução: {end - start}s')
 
 '''
 Essa energia total tá certa?
