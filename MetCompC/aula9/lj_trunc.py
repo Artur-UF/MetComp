@@ -213,12 +213,12 @@ class Particle:
                 r0s.append(p.pos)
             return r0s, switch, drs
         if switch == 1:
-            drs = []
+            drs = 0
             for i in range(n):
                 dx = (pt[i].pos[0] + (l * pt[i].bxy[0])) - r0s[i][0]
                 dy = (pt[i].pos[1] + (l * pt[i].bxy[1])) - r0s[i][1]
-                drs.append(dx**2 + dy**2)
-            drs = sum(drs)/n
+                drs += dx**2 + dy**2
+            drs /= n
             return r0s, switch, drs
 
     @classmethod
@@ -327,6 +327,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
         if (cmsd * tmax) + (tmax * teq) <= t <= (cmsd * tmax) + tmax:
             r0s, switch, drsi = Particle.msd(l, r0s, switch=switch)
             drs[cmsd].append(drsi)
+            ''' Faz um contador pra limitar o número de valores em cada espaço de tempo '''
         if t > (cmsd * tmax) + tmax:
             switch = 0
             cmsd += 1
@@ -362,7 +363,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
     # Plot da RDF
     g = Particle.rdf(l, switch=2, ngr=ngr, g=g, size=10)
     rs = np.linspace(0, l/2, len(g))
-    figura = plt.figure(4, figsize=(15, 5))
+    plt.figure(4, figsize=(15, 5))
     plt.subplot(121)
     plt.plot(rs, g)
     plt.title(f'Função de Distribuição Radial\nn = {n**2} | Ti = {T}')
@@ -383,7 +384,7 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, ci='Random'):
     plt.xscale('log')
     plt.yscale('log')
     plt.title(f'Desvio quadrático médio\n tf = {tf} | dt = {dt}')
-    plt.grid()
+    plt.grid('log')
     plt.savefig('RDF_MSD.png')
 
     pressao = Particle.calcpressao(T, c, l)
@@ -403,7 +404,7 @@ di = .4
 eps = 1
 sig = 1
 T = .5
-tf = 5
+tf = 10
 dt = .01
 ci = 'Triangulo'
 dinmol(l, n, r, di, eps, sig, T, tf, dt, ci)
