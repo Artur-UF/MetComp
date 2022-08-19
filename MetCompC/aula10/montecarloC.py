@@ -1,33 +1,26 @@
+'''
+Estudando a divergência de x**l usando Monte Carlo
+'''
 import numpy as np
-import matplotlib.pyplot as plt
 import random as rand
 
 
-def montecarlo(fx, inf, sup):
-    xi = list()    
+def montecarlo(fx, inf, sup, n):
+    xi = np.asarray(list(rand.uniform(inf, sup) for i in range(n)))
+    fxi = fx(xi)
+    integ = (sup - inf) * (sum(fxi)/n)
+    var = np.var(fxi, ddof=1)
+    std = np.sqrt(var)
+    return integ, std, var
 
-l = np.arange(0, -1, -1)
 
-fx = lambda x: x**l
-sup = 1
+lamb = np.arange(0, -1.1, -0.1)
+
 inf = 0
-esq = 
-dir
-n = 1000
-
-ns = np.arange(1, n)
-itent = []
-imed = []
-for i in ns:
-    itent.append(montecarlotnterr(fx, 10, 0, 0, np.pi, i))
-    imed.append(montecarlomed(fx, 0, np.pi, i))
-
-
-plt.plot(ns, itent, label='Tentativa e Erro')
-#plt.plot(ns, imed, label='Amostragem Média')
-plt.xlabel('N')
-plt.ylabel('Integral')
-plt.legend()
-plt.grid()
-plt.savefig("funcaomontecarlo.png")
-
+sup = 1
+n = 10000
+print(f'Lambda | Monte Carlo | std')
+for l in lamb:
+    fx = lambda x: x ** l
+    intg, std, var = montecarlo(fx, inf, sup, n)
+    print(f'{l:<6.1f} | {intg:.8f}  | {std}')

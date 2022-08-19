@@ -372,22 +372,19 @@ def dinmol(l, n, r, di, eps, sig, T, tf, dt, s, ci='Random'):
 
     # Plot do MSD
     #igualar os tamanhos
-    print(drs[0])
-    print(drs[1])
-    print(drs[2])  
     sizes = []
     for j in range(s):
-        sizes.append(len(drs[i]))
+        sizes.append(len(drs[j]))
     sz = min(sizes)
     for j in range(s):
-        if len(drs[i]) > sz:
-            drs[i].pop()
+        if len(drs[j]) > sz:
+            drs[j].pop()
 
     msd = np.asarray(drs[0])
     for i in range(1, s):
         msd += np.asarray(drs[i])
     msd = msd/s
-    tm = np.arange(teq * tmax, tmax, dt)
+    tm = np.linspace(teq * tmax, tmax+dt, len(msd))
     plt.subplot(122)
     plt.plot(tm, msd)
     plt.xlabel('t (s)')
@@ -415,7 +412,7 @@ di = .4
 eps = 1
 sig = 1
 T = .5
-tf = 7
+tf = 6.45
 dt = .01
 s = 3
 ci = 'Triangulo'
@@ -423,4 +420,5 @@ dinmol(l, n, r, di, eps, sig, T, tf, dt, s, ci)
 
 '''
 Essa energia total tá certa?
+Talvez o msd esteja certo agora
 '''
