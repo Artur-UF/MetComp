@@ -35,4 +35,5 @@ plt.hist(probs, bins=100)
 plt.grid()
 plt.xlabel('P')
 plt.ylabel('frequnência')
-plt.show()
+plt.savefig('MC_dogsflea.png')
+
