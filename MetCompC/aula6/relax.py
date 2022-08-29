@@ -77,8 +77,8 @@ def jacobi(n, l1, l2, fxy):
     return fxy
 
 
-#fig, ax = plt.subplots()
-fig = plt.figure().add_subplot(projection='3d')
+fig, ax = plt.subplots()
+#fig = plt.figure().add_subplot(projection='3d')
 
 n = 50
 l1 = 100
@@ -93,14 +93,14 @@ x, y = np.meshgrid(xx, yy)
 for ti in np.arange(0, 400):
     z = jacobi(n, l1, l2, fxy)
     # 3D
-    fig.plot_surface(x, y, z, cmap='magma')
-    fig.set(xlabel='x', ylabel='y', zlabel='z')
+    #fig.plot_surface(x, y, z, cmap='magma')
+    #fig.set(xlabel='x', ylabel='y', zlabel='z')
 
 
     # Colormap
-    #plt.imshow(z, cmap='plasma', vmax=.8)
-    #plt.ylabel('y')
-    #plt.xlabel('x')
+    plt.imshow(z, cmap='plasma', vmax=.8)
+    plt.ylabel('y')
+    plt.xlabel('x')
 
     plt.title(f'Eq. de Laplace: Jacobi'
               f'\n{symb["lambda"] + "1"} = {l1} | '
