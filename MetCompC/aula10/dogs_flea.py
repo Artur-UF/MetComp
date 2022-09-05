@@ -29,11 +29,14 @@ def dogflea(n, tf):
 
 n = 100
 tf = 10000
-probs = dogflea(n, tf)
-
-plt.hist(probs, bins=100)
+probs = np.array(dogflea(n, tf))
+x = np.linspace(0, 1, n)
+rv = st.binom(n, 0.5)
+plt.hist(probs, bins=n+1, range=(0, 1), density=True, stacked=True)
 plt.grid()
 plt.xlabel('P')
 plt.ylabel('frequnência')
+#plt.plot(x, st.binom.pmf(x, n, 0.5))
+#plt.xlim(0, 1)
 plt.savefig('MC_dogsflea.png')
 

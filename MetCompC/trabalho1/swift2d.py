@@ -36,7 +36,7 @@ fig, ax = plt.subplots()
 t = np.arange(0, tf, dt)
 for ti in t:
     z = swift2d(dx, dy, dt, r, fxy)
-    plt.imshow(z, cmap='Greys')
+    plt.imshow(z, cmap='viridis', vmin=-.5, vmax=.5)
     plt.title(f'Swift-Hohenberg\nr = {r} | t = {ti:<4.2f}')
     plt.xlabel('x')
     plt.ylabel('y')
