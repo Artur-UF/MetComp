@@ -30,7 +30,7 @@ N = 128
 L = 50
 dx = L/N
 dy = dx
-r = 0.001
+r = -.01
 x = np.arange(-L/2, L/2, dx)
 y = np.arange(-L/2, L/2, dy)
 size = len(x)
@@ -43,15 +43,18 @@ kappax, kappay = np.meshgrid(kx, ky)
 # Vetor de estado
 u0 = np.random.rand(size, size)
 
-dt = .0001
-tf = 5
+dt = 0.0001
+tf = 1
 t = np.arange(0, tf, dt)
-
+figure = plt.figure(1)
+plt.imshow(u0, cmap='viridis', vmin=0, vmax=.8)
+plt.colorbar()
 for ti in t:
     passo = np.where(t == ti)[0][0]
+    u0 += dt * rhs(u0, kappax, kappay, r)
     if passo % 15 == 0:
         plt.imshow(u0, cmap='viridis', vmin=0, vmax=.8)
-        plt.title(f'Swift-Hohenberg\n passo = {passo} | t = {ti:.3f}')
+        plt.title(f'Swift-Hohenberg\n r = {r} | passo = {passo} | t = {ti:.3f}')
         plt.pause(0.001)
         plt.cla()
-    u0 += dt*rhs(u0, kappax, kappay, r)
+
