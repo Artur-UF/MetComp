@@ -36,31 +36,28 @@ size = len(x)
 kx = 2 * np.pi * np.fft.fftfreq(N, d=dx)
 ky = 2 * np.pi * np.fft.fftfreq(N, d=dy)
 kappax, kappay = np.meshgrid(kx, ky)
-'''print(kappax)
-plt.scatter(range(len(kappax[0])), kappax[0])
-plt.scatter(range(len(kappay[0])), kappay[0])
-plt.grid()
-plt.show()
-'''
+
 # Vetor de estado
 u0 = np.random.randn(size, size)
 
-allstates = [u0]
+track = [u0]
 
 dt = 0.0001
-tf = 1
+tf = .2
 t = np.arange(0, tf, dt)
 figure = plt.figure(1)
-plt.imshow(u0, cmap='viridis', vmin=0, vmax=.8)
+plt.imshow(track[0], cmap='viridis', vmin=-1, vmax=1)
 plt.colorbar()
+c = 0
 for ti in t:
-    passo = np.where(t == ti)[0][0]
+    c += 1
     u0 += dt * rhs(u0, kappax, kappay, r)
-    if passo % 15 == 0:
-        allstates.append(u0)
-        plt.imshow(u0, cmap='viridis', vmin=-1, vmax=1)
-        plt.title(f'Swift-Hohenberg\n r = {r} | passo = {passo} | t = {ti:.3f}')
+    if c % 15 == 0:
+        track.append(u0)
+        plt.imshow(track[c//15], cmap='viridis', vmin=-1, vmax=1)
+        plt.title(f'Swift-Hohenberg\n r = {r} | passo = {c} | t = {ti:.3f}')
         plt.pause(0.001)
         plt.cla()
-allstates = np.asarray(allstates)
-np.save('swiftanimgen.npy', allstates)
+
+track = np.asarray(track)
+np.save('swiftanimgen.npy', track)

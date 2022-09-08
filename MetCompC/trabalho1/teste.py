@@ -2,8 +2,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.fft as sp
 
-#u = np.load('swiftanimgen.npy')
+u = np.load('swiftanimgen.npy')
+print(len(u))
+for i in u:
+    plt.imshow(i, vmin=-1, vmax=1)
+    plt.title(f'{np.where(i == u)[0]}')
+    plt.pause(0.001)
 
+
+
+
+
+
+
+
+
+
+
+
+'''
 N = 64
 L = 50
 dx = L/N
@@ -14,26 +31,15 @@ y = np.arange(-L/2, L/2, dy)
 size = len(x)
 
 # Os coeficientes
-kx = 2 * np.pi * np.fft.fftfreq(N, d=dx)
-ky = 2 * np.pi * np.fft.fftfreq(N, d=dy)
+kx = 2 * np.pi * sp.fftfreq(N, d=dx)
+ky = 2 * np.pi * sp.fftfreq(N, d=dy)
 kappax, kappay = np.meshgrid(kx, ky)
-kx2 = 2 * np.pi * sp.fftfreq(N, d=dx)
-ky2 = 2 * np.pi * sp.fftfreq(N, d=dy)
-kappax2, kappay2 = np.meshgrid(kx2, ky2)
-#print(kappax)
-#figure = plt.figure(figsize=(10, 5))
-#plt.subplots(121)
-'''
-plt.scatter(range(len(kappax[0])), kappax[0])
-plt.scatter(range(len(kappay[0])), kappay[0])
+plt.figure(1)
+plt.scatter(range(len(kappax[0])), kappax[0], label='kappax')
+plt.scatter(range(len(kappay[0])), kappay[0], label='kappay')
 plt.grid()
+plt.legend()
+plt.savefig('coeficientesFFT.png')
 '''
-#plt.subplots(122)
-plt.scatter(range(len(kappax2[0])), kappax2[0])
-plt.scatter(range(len(kappay2[0])), kappay2[0])
-plt.grid()
-
-plt.show()
-
 
 

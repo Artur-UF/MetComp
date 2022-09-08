@@ -80,7 +80,7 @@ def dinmol(x0, y0, vx0, vy0, l, r, tf, dt, gamma, Gamma):
     plt.grid()
     ax1.set_title(f'Equação de Langevin\n' + r'$\gamma$ = ' + f'{gamma}'
                   + r' | $\Gamma$ = ' + f'{Gamma}' + f' | t = {tf}')
-    plt.savefig('langavin.png')
+    plt.savefig('langevin.png')
     track = np.asarray(track)
     np.save('tracker_langavin.npy', track)
 

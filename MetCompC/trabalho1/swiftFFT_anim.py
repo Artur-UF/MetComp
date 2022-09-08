@@ -24,64 +24,56 @@ def rhs(u, kappax, kappay, r):
     return dut.real
 
 
-def gen():
-    N = 64
-    L = 50
-    dx = L/N
-    dy = dx
-    r = -.01
-    x = np.arange(-L/2, L/2, dx)
-    y = np.arange(-L/2, L/2, dy)
-    size = len(x)
+N = 64
+L = 50
+dx = L/N
+dy = dx
+r = -.01
+x = np.arange(-L/2, L/2, dx)
+y = np.arange(-L/2, L/2, dy)
+size = len(x)
+u0 = np.random.randn(size, size)
 
+
+def gen():
+    global N, dx, dy, r, u0
     # Os coeficientes
     kx = 2 * np.pi * np.fft.fftfreq(N, d=dx)
     ky = 2 * np.pi * np.fft.fftfreq(N, d=dy)
     kappax, kappay = np.meshgrid(kx, ky)
 
-    # Vetor de estado
-    u0 = np.random.rand(size, size)
-
     dt = 0.0001
-    tf = 1
+    tf = 1.5
     t = np.arange(0, tf, dt)
     for ti in t:
         passo = np.where(t == ti)[0][0]
         if passo % 15 == 0:
-            yield u0, passo, ti, r
+            yield u0, passo, ti
         u0 += dt * rhs(u0, kappax, kappay, r)
 
 
 fig, ax = plt.subplots()
-
-
-def init():
-    '''
-    É o inicio de todo frame após o 'run'
-    '''
-    plt.cla()
-    plt.xlabel('x')
-    plt.ylabel('y')
+im = plt.imshow(u0, vmin=-1, vmax=1)
+plt.colorbar()
+plt.xlabel('x')
+plt.ylabel('y')
 
 
 def run(data):
     '''
     Roda a animação com os dados fornecidos por 'data'
     '''
-    u, passo, ti, r = data
+    global r
+    u, passo, ti = data
     # Colormap
-    plt.imshow(u, cmap='viridis', vmin=0, vmax=.8)
-    if ti == 0:
-        plt.colorbar()
-    plt.ylabel('y')
-    plt.xlabel('x')
+    im.set_array(u)
     plt.title(f'Swift-Hohenberg\n r = {r} | passo = {passo} | t = {ti:.3f}')
 
 
-ani = animation.FuncAnimation(fig, run, gen, interval=10, init_func=init)
-plt.show()
+ani = animation.FuncAnimation(fig, run, gen, interval=5, save_count=1500, blit=True)
+#plt.show()
 
-#writergif = animation.PillowWriter(fps=30)
-#ani.save(r'SHFFT.gif', writer=writergif)
+writergif = animation.PillowWriter(fps=30)
+ani.save(r'SHFFT.gif', writer=writergif)
 
 plt.close()
