@@ -2,6 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.fft as sp
 
+
+arr = np.arange(0, 10, 0.1)
+print(len(arr))
+
+
+
+
+'''
 u = np.load('swiftanimgen.npy')
 print(len(u))
 for i in u:
@@ -10,17 +18,6 @@ for i in u:
     plt.pause(0.001)
 
 
-
-
-
-
-
-
-
-
-
-
-'''
 N = 64
 L = 50
 dx = L/N
