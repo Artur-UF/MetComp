@@ -4,7 +4,6 @@ import scipy.fft as sp
 from scipy.integrate import odeint
 
 
-
 def rhs(u0, t, kappa, r):
     uhat = sp.fft(u0)
     uhat3 = sp.fft(u0**3)

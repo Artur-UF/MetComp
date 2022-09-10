@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fft import *
+import time
 
-
+start = time.time()
 def rhs(u, kappax, kappay, r):
     '''
     Calcula o lado direito da EDP
@@ -23,11 +24,11 @@ def rhs(u, kappax, kappay, r):
     return dut.real
 
 
-N = 64
+N = 128
 L = 50
 dx = L/N
 dy = dx
-r = -0.1
+r = 0.3
 x = np.arange(-L/2, L/2, dx)
 y = np.arange(-L/2, L/2, dy)
 size = len(x)
@@ -40,24 +41,36 @@ kappax, kappay = np.meshgrid(kx, ky)
 # Vetor de estado
 u0 = np.random.randn(size, size)
 
-track = [u0]
+
+#track = [u0]
 
 dt = 0.0001
-tf = .2
+tf = 20
 t = np.arange(0, tf, dt)
+'''
 figure = plt.figure(1)
-plt.imshow(track[0], cmap='viridis', vmin=-1, vmax=1)
+plt.imshow(u0, cmap='viridis', vmin=-1, vmax=1)
 plt.colorbar()
 c = 0
+'''
 for ti in t:
-    c += 1
+    #c += 1
     u0 += dt * rhs(u0, kappax, kappay, r)
-    if c % 15 == 0:
+    if ti % 2 == 0:
+        print(f't = {ti}')
+    '''
+    if c % 200 == 0:
         track.append(u0)
-        plt.imshow(track[c//15], cmap='viridis', vmin=-1, vmax=1)
+        plt.imshow(track[c//200], cmap='viridis', vmin=-1, vmax=1)
         plt.title(f'Swift-Hohenberg\n r = {r} | passo = {c} | t = {ti:.3f}')
         plt.pause(0.001)
         plt.cla()
-
-track = np.asarray(track)
-np.save('swiftanimgen.npy', track)
+    '''
+    if ti == tf-dt:
+        plt.imshow(u0, cmap='viridis', vmin=-1, vmax=1)
+        plt.title(f'Swift-Hohenberg\n r = {r} | passo = {len(t)} | t = {ti:.3f}')
+        plt.savefig(f'SH_FFTr{r}tf{tf}.png')
+#track = np.asarray(track)
+#np.save('swiftanimgen.npy', track)
+end = time.time()
+print(f'Tempo de execução = {end-start}s')
