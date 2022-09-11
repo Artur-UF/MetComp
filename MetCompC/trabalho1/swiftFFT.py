@@ -25,7 +25,7 @@ def rhs(u, kappax, kappay, r):
 
 
 N = 128
-L = 50
+L = 40
 dx = L/N
 dy = dx
 r = 0.3
@@ -44,8 +44,8 @@ u0 = np.random.randn(size, size)
 
 #track = [u0]
 
-dt = 0.0001
-tf = 20
+dt = 0.00005
+tf = 1
 t = np.arange(0, tf, dt)
 '''
 figure = plt.figure(1)
