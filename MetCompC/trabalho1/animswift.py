@@ -2,23 +2,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-estados = np.load('SH-r0.4-t20.npy')
+r = 0.35
+tf = 20
+estados = np.load(f'SH-r{r}-t{tf}.npy')
 
 
 def gen():
-    global estados
+    global estados, r
     dt = 0.0001
     ti = 0
-    r = 0.4
     passo = 0
     for u0 in estados:
         yield u0, passo, ti, r
-        ti += 200*dt
-        passo += 200
+        # Lembra de ajustar os passos !!!
+        ti += 500*dt
+        passo += 500
 
 
 fig, ax = plt.subplots()
-im = plt.imshow(estados[0], cmap='viridis', vmin=-1, vmax=1)
+im = plt.imshow(estados[0], origin='lower', cmap='viridis', vmin=-1, vmax=1)
 plt.colorbar()
 plt.xlabel('x')
 plt.ylabel('y')
@@ -37,6 +39,6 @@ ani = animation.FuncAnimation(fig, run, gen, interval=10, save_count=1500, blit=
 #plt.show()
 
 writergif = animation.PillowWriter(fps=30)
-ani.save(f'SH-r0.4-t20.gif', writer=writergif)
+ani.save(f'SH-r{r}-t{tf}.gif', writer=writergif)
 
 plt.close()

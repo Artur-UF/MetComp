@@ -28,8 +28,8 @@ def rhs(u, kappax, kappay, r):
     return dut.real
 
 
-N = 64
-L = 25
+N = 256
+L = 100
 dx = L/N
 dy = dx
 x = np.arange(-L/2, L/2, dx)
@@ -47,7 +47,7 @@ u0 = np.random.uniform(-1, 1, (size, size))
 
 track = [copy.deepcopy(u0)]
 
-r = 0.4
+r = 0.35
 dt = 0.0001
 tf = 20
 t = np.arange(0, tf, dt)
@@ -55,12 +55,10 @@ c = 0
 for ti in t:
     c += 1
     u0 += dt * rhs(u0, kappax, kappay, r)
-    if c % 200 == 0:
+    if c % 500 == 0:
         track.append(copy.deepcopy(u0))
     if ti % 2 == 0:
         print(f't = {ti}')
-end = time.time()
-tempo = end-start
 
 plt.imshow(u0, origin='lower', vmin=-1, vmax=1)
 plt.colorbar()
@@ -77,6 +75,8 @@ ark.write(f'Integração de Swift-Hohenberg\n'
           f'r = {r}\n'
           f'passos = {len(t)}\n'
           f'numpy seed = {seed}\n')
+end = time.time()
+tempo = end-start
 if tempo > 60:
     ark.write(f'Tempo de execução = {tempo/60:.3f}min\n')
 else:

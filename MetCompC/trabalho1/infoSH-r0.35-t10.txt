@@ -1,0 +1,8 @@
+Integração de Swift-Hohenberg
+Tempo total = 10
+dx = 0.390625
+dt = 0.0001
+r = 0.35
+passos = 100000
+numpy seed = 597
+Tempo de execução = 25.803min
