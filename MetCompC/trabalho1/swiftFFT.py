@@ -1,10 +1,11 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.fft import *
 import time
 import copy
+import os
 start = time.time()
-seed = 597
+seed = 666
 np.random.seed(seed)
 
 
@@ -28,51 +29,67 @@ def rhs(u, kappax, kappay, r):
     return dut.real
 
 
+# Todos os parâmetros estão aqui:
 N = 256
 L = 100
 dx = L/N
-dy = dx
+r = 0.25
+dt = 0.0001
+tf = 100
+checkpoint = 500
+# *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 x = np.arange(-L/2, L/2, dx)
-y = np.arange(-L/2, L/2, dy)
+y = np.arange(-L/2, L/2, dx)
 size = len(x)
 
 # Os coeficientes
 kx = 2 * np.pi * np.fft.fftfreq(N, d=dx)
-ky = 2 * np.pi * np.fft.fftfreq(N, d=dy)
+ky = 2 * np.pi * np.fft.fftfreq(N, d=dx)
 kappax, kappay = np.meshgrid(kx, ky)
 
-# Vetor de estado
-#u0 = np.random.randn(size, size)
+# Matriz do estado inicial
 u0 = np.random.uniform(-1, 1, (size, size))
 
+# Array da evolução temporal
 track = [copy.deepcopy(u0)]
 
-r = 0.35
-dt = 0.0001
-tf = 20
-t = np.arange(0, tf, dt)
+# A integração ocorre aqui
 c = 0
+t = np.arange(0, tf, dt)
 for ti in t:
     c += 1
     u0 += dt * rhs(u0, kappax, kappay, r)
-    if c % 500 == 0:
+    if c % checkpoint == 0:
         track.append(copy.deepcopy(u0))
     if ti % 2 == 0:
         print(f't = {ti}')
 
+# Criação do arquivo de resultados
+path = os.path.join(os.getcwd(), f'SH_r{r}_t{tf}')
+try:
+    os.mkdir(path)
+except FileExistsError:
+    pass
+
+# Gerando o plot do último passo temporal
 plt.imshow(u0, origin='lower', vmin=-1, vmax=1)
 plt.colorbar()
-plt.title(f'Swift-Hohenberg\nr = {r} | passos = {len(t)} | dx = {dx:.3f}')
-plt.savefig(f'pltSH-r{r}-t{tf}.png', dpi=300)
-track = np.asarray(track)
-np.save(f'SH-r{r}-t{tf}.npy', track)
-ark = open(f'infoSH-r{r}-t{tf}.txt', 'w')
+plt.title(f'Swift-Hohenberg\nr = {r} | passos = {len(t)} | tf = {tf} | dt = {dt}')
+plt.savefig(path+f'/SH-plot.png', dpi=300)
 
+# Salvando a evolução temporal
+track = np.asarray(track)
+np.save(path+f'/SH-array.npy', track)
+
+# Escrevendo o arquivo de informações
+ark = open(path+f'/info-SH.txt', 'w')
 ark.write(f'Integração de Swift-Hohenberg\n'
-          f'Tempo total = {tf}\n'
-          f'dx = {dx}\n'
-          f'dt = {dt}\n'
+          'Para gerar a animação copie+cole os 3 primeiros parâmetros em animswift.py\n'
+          f'checkpoint = {checkpoint}\n'
+          f'tf = {tf}\n'
           f'r = {r}\n'
+          f'dt = {dt}\n'
+          f'dx = {dx}\n'
           f'passos = {len(t)}\n'
           f'numpy seed = {seed}\n')
 end = time.time()

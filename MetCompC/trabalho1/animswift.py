@@ -1,22 +1,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import os
 
-r = 0.35
-tf = 20
-estados = np.load(f'SH-r{r}-t{tf}.npy')
+# Cole aqui:
+#-*-*-*-*-*-*-*-*
+checkpoint = 500
+tf = 100
+r = 0.25
+#-*-*-*-*-*-*-*-*
+path = os.path.join(os.getcwd(), f'SH_r{r}_t{tf}')
+estados = np.load(path+f'/SH-array.npy')
 
 
 def gen():
-    global estados, r
+    global estados, r, checkpoint
     dt = 0.0001
     ti = 0
     passo = 0
-    for u0 in estados:
+    for u0 in estados[::2]:
         yield u0, passo, ti, r
-        # Lembra de ajustar os passos !!!
-        ti += 500*dt
-        passo += 500
+        ti += 2*checkpoint*dt
+        passo += 2*checkpoint
 
 
 fig, ax = plt.subplots()
@@ -39,6 +44,10 @@ ani = animation.FuncAnimation(fig, run, gen, interval=10, save_count=1500, blit=
 #plt.show()
 
 writergif = animation.PillowWriter(fps=30)
-ani.save(f'SH-r{r}-t{tf}.gif', writer=writergif)
+ani.save(path+f'/SH-anim.gif', writer=writergif)
+
+#writer = animation.writers['ffmpeg']
+#writerfin = writer(fps=24, metadata={'artist': 'Eu'}, bitrate=1800)
+#ani.save(path+f'/SH-anim.mp4', writerfin)
 
 plt.close()
