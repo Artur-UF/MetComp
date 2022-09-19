@@ -6,8 +6,8 @@ import os
 # Cole aqui:
 #-*-*-*-*-*-*-*-*
 checkpoint = 500
-tf = 100
-r = 0.25
+tf = 10
+r = 0.4
 #-*-*-*-*-*-*-*-*
 path = os.path.join(os.getcwd(), f'SH_r{r}_t{tf}')
 estados = np.load(path+f'/SH-array.npy')
@@ -18,10 +18,10 @@ def gen():
     dt = 0.0001
     ti = 0
     passo = 0
-    for u0 in estados[::2]:
+    for u0 in estados:
         yield u0, passo, ti, r
-        ti += 2*checkpoint*dt
-        passo += 2*checkpoint
+        ti += checkpoint*dt
+        passo += checkpoint
 
 
 fig, ax = plt.subplots()
@@ -43,11 +43,11 @@ def run(data):
 ani = animation.FuncAnimation(fig, run, gen, interval=10, save_count=1500, blit=True)
 #plt.show()
 
-writergif = animation.PillowWriter(fps=30)
-ani.save(path+f'/SH-anim.gif', writer=writergif)
+# Escolha o formato da animação desejado, gif ou mp4:
+#writergif = animation.PillowWriter(fps=30)
+#ani.save(path+f'/SH-anim.gif', writer=writergif)
 
-#writer = animation.writers['ffmpeg']
-#writerfin = writer(fps=24, metadata={'artist': 'Eu'}, bitrate=1800)
-#ani.save(path+f'/SH-anim.mp4', writerfin)
+FFwriter = animation.FFMpegWriter(fps=10)
+ani.save(path+f'/SH-anim.mp4', writer=FFwriter)
 
 plt.close()
