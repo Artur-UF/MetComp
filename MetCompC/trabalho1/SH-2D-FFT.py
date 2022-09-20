@@ -94,7 +94,7 @@ np.save(path+f'/SH-array.npy', track)
 # Escrevendo o arquivo de informações
 ark = open(path+f'/info-SH.txt', 'w')
 ark.write(f'Integração de Swift-Hohenberg\n'
-          'Para gerar a animação copie+cole os 3 primeiros parâmetros em animswift.py\n'
+          'Para gerar a animação copie+cole os 3 primeiros parâmetros em anim-SH.py\n'
           f'checkpoint = {checkpoint}\n'
           f'tf = {tf}\n'
           f'r = {r}\n'
