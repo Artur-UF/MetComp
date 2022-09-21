@@ -33,7 +33,7 @@ def rhs(u, kappax, kappay, r):
 N = 256
 L = 100
 dx = L/N
-r = 0.4
+r = -0.25
 dt = 0.0001
 tf = 10
 checkpoint = 500
@@ -48,8 +48,8 @@ ky = 2 * np.pi * np.fft.fftfreq(N, d=dx)
 kappax, kappay = np.meshgrid(kx, ky)
 
 # Matriz do estado inicial
-#u0 = np.random.uniform(-1, 1, (size, size))
-
+u0 = np.random.uniform(-1, 1, (size, size))
+''' Um estado inicial diferente
 x = size
 k = -5
 u0 = np.eye(x, k=k)
@@ -58,7 +58,7 @@ for i in range(2*x-1):
     c *= -1
     k += 1
     u0 += np.eye(x, k=k)*c
-
+'''
 
 # Array da evolução temporal
 track = [copy.deepcopy(u0)]

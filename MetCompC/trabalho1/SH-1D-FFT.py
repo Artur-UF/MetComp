@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy.fft as sp
 from scipy.integrate import odeint
@@ -37,18 +36,14 @@ kappa = 2 * np.pi * sp.fftfreq(N, d=dx)
 # Vetor das condições iniciais
 u0 = np.random.uniform(-1, 1, size)
 
-
+# Integração usando o método do Scipy
 t = np.arange(0, tf, dt)
-
 u = odeint(rhs, u0, t, args=(kappa, r))
-
 
 # Criação do arquivo de resultados
 path = os.path.join(os.getcwd(), f'SH-1D-results')
-
 try:
     os.mkdir(path)
 except FileExistsError:
     pass
-
 np.save(path+f'/SH-1D-array-r{r}.npy', u)

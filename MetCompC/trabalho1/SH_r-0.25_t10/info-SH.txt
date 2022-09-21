@@ -1,0 +1,10 @@
+Integração de Swift-Hohenberg
+Para gerar a animação copie+cole os 3 primeiros parâmetros em anim-SH.py
+checkpoint = 500
+tf = 10
+r = -0.25
+dt = 0.0001
+dx = 0.390625
+passos = 100000
+numpy seed = 666
+Tempo de execução = 29.372min
