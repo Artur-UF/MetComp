@@ -33,13 +33,6 @@ def ising(n, nup, j, beta, rep):
                 nup = nupaux
     return h, M(nup), nup
 
-
-path = os.path.join(os.getcwd(), f'results_ising')
-try:
-    os.mkdir(path)
-except FileExistsError:
-    pass
-
 n = 1000
 nup = 0
 j = 1
