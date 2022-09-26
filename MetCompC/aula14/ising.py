@@ -44,7 +44,4 @@ print(f'Magnetização = {M}')
 print(f'Nups = {up}')
 print(time() - start)
 
-ark = open(path+f'/ising_nup{nup}.txt', 'w')
-ark.write(f'Energia = {h}\nMagnetização = {M}')
-ark.close()
 
