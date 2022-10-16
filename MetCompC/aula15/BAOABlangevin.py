@@ -25,7 +25,7 @@ class Particle:
         self.pos[1] += self.vel[1]*(dt/2)
 
     def baoab_duplo(self, dt, exp, sqexp, sqt, G, g, a, b):
-        fr = lambda x, y, vx, vy: -g*np.hypot(vx, vy) - a*np.hypot(x, y)**3 + b*np.hypot(x, y)
+        fr = lambda x, y, vx, vy: - a*np.hypot(x, y)**3 + b*np.hypot(x, y)
         fx = lambda x, y, vx, vy: fr(x, y, vx, vy)*(x/np.hypot(x, y))
         fy = lambda x, y, vx, vy: fr(x, y, vx, vy)*(y/np.hypot(x, y))
 
@@ -54,11 +54,11 @@ class Particle:
     def msd(self, r0, dr, switch):  # Essa é uma medição para n partículas né?
         if switch == 0:
             r0 = [self.pos[0], self.pos[1]]   # Posição de referência nesse ciclo
-            dr = 0          # Desvio no tempo de referência 0
+            dr = 0                            # Desvio no tempo de referência 0
             switch = 1
             return r0, dr, switch
         if switch == 1:
-            dx = self.pos[0] - r0[0]    # Desvio em x
+            dx = self.pos[0] - r0[0]        # Desvio em x
             dy = self.pos[1] - r0[1]    # Desvio em y
             dr = dx**2 + dy**2          # Desvio quadrático
             return r0, dr, switch
@@ -84,7 +84,6 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     r0 = 0
     dr = 0
     switch = 0
-    #arrmsds = np.zeros((ciclos, tmax+1))
     arrmsd = np.zeros(tmax+1)
     if POT == 'Livre':
         pasta = 'BAOAB_livre'
@@ -98,7 +97,6 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
             # MSD
             if cont < tmax:
                 r0, dr, switch = p1.msd(r0, dr, switch)
-                #arrmsds[cat-1][cont] = dr
                 arrmsd[cont] += dr
             cont += 1
             if cont >= tmax:
@@ -118,7 +116,7 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     arrmsd /= ciclos
 
     # Criação do arquivo de resultados
-    path = os.path.join(os.getcwd(), pasta)
+    path = os.path.join(os.getcwd(), pasta+f'_g{g}T{T}tf{tf}')
     try:
         os.mkdir(path)
     except FileExistsError:
@@ -127,15 +125,17 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     #np.save(path+f'/langevin_g{g}T{T}tf{tf}.npy', track)
     np.save(path+f'/msd_g{g}T{T}tf{tf}.npy', arrmsd)
 
-    ark = open(path+f'/info.txt', 'w')
+    ark = open(path+f'/info_g{g}T{T}tf{tf}.txt', 'w')
     ark.write(f'dt = {dt}\n'
               f'tf = {tf}\n'
               f'g = {g}\n'
               f'a = {a}\n'
               f'b = {b}\n'
               f'T = {T}\n'
+              f'cic = {cic}\n'
               f'POT = \'{POT}\'\n'
               f'Seed = {seed}\n'
+              f'Passos = {passos}\n'
               f'Tempo de execução = {time() - start:.3f}s')
 
 
@@ -144,13 +144,13 @@ y0 = 0
 vx0 = 0
 vy0 = 0
 dt = 0.01
-tf = 10000
+tf = 100000
 passos = int(tf/dt)  # Numerador é o tempo final
-g = 0.5
+g = 100
 a = 0.25
 b = 1
 T = 1
-cic = 10
+cic = 100
 POT = 'Livre' #'Duplo'
 
 dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT=POT)
