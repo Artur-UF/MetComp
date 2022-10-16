@@ -1,0 +1,9 @@
+dt = 0.01
+tf = 10
+g = 0.5
+a = 0.25
+b = 1
+T = 1
+POT = 'Duplo'
+Seed = 666
+Tempo de execução = 0.023147106170654297s
