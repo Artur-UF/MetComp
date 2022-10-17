@@ -1,3 +1,6 @@
+'''
+Este código irá gerar uma pasta no seu próprio diretório contendo os dados gerados e um .txt com informações
+'''
 import numpy as np
 from time import time
 import os
@@ -14,6 +17,13 @@ class Particle:
         self.todas.append(self)
 
     def baoab_livre(self, dt, exp, sqexp, sqt, G):
+        '''
+        dt: discretização do tempo
+        exp: termo referente a primeira exponencial da eq.3
+        spexp: termo da raiz quadrada com exponencial da eq.3
+        sqt: termo da raiz quadrada com a Temperatura da eq.3
+        G: o vetor G da eq.3
+        '''
         # 1/2 passo da distância
         self.pos[0] += self.vel[0]*(dt/2)
         self.pos[1] += self.vel[1]*(dt/2)
@@ -123,6 +133,7 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     except FileExistsError:
         pass
 
+    # Aqui são salvos os arrays de MSD e o rastreador
     np.save(path+f'/langevin_g{g}T{T}tf{tf}.npy', track)
     np.save(path+f'/msd_g{g}T{T}tf{tf}.npy', arrmsd)
 
@@ -139,7 +150,7 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
               f'Passos = {passos}\n'
               f'Tempo de execução = {time() - start:.3f}s')
 
-
+#-*-*-*-*- Parâmetros *-*-*-*-*-*
 x0 = 1
 y0 = 0
 vx0 = 0
@@ -153,8 +164,6 @@ b = 1
 T = 1
 cic = 100
 POT = 'Duplo' #'Livre'
+#-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT=POT)
-
-
-

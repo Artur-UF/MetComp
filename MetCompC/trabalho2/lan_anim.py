@@ -6,6 +6,7 @@ import os
 from time import time
 start = time()
 
+# Copie essas definições do arquivo info que deseja
 #*-*-*-**-Definições-*-*-*-*
 dt = 0.01
 tf = 10
@@ -92,6 +93,8 @@ def run_duplo(data):
     plt.title(f'Equação de Langevin para poço duplo radial: BAOAB\n' + r'$\gamma$ = ' + f'{g}' +
               f' | T = {T} '+r'$\Delta t = $'+f'{dt} | passo = {c:<4}')
 
+
+# Selecione o formato desejado (.mp4 é o recomendado e é necessário FFMpeg instalado para rodar)
 
 if POT == 'Livre':
     ani = animation.FuncAnimation(fig, run_livre, gen, interval=20, init_func=init, save_count=1500, blit=True)

@@ -3,6 +3,7 @@ import numpy as np
 import scipy.stats as sp
 import os
 
+# Copie essas definições do arquivo info que deseja
 #*-*-*-**-Definições-*-*-*-*
 dt = 0.01
 tf = 100000
@@ -24,8 +25,10 @@ msd = msd[1:-1]
 
 t = np.arange(dt, int(tf/cic), dt)
 
+# Aqui você seleciona o fatiamento necessário dos arrays para realizar os ajustes
 sep = 1000
 delta = 500
+# *-*-*-*-*-*
 D_num = sum(msd[sep+delta:]/(4*t[sep+delta:]))/len(t[sep+delta:])
 
 msd = np.log10(msd)
