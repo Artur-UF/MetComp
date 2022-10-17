@@ -24,8 +24,8 @@ class Particle:
         self.pos[0] += self.vel[0]*(dt/2)
         self.pos[1] += self.vel[1]*(dt/2)
 
-    def baoab_duplo(self, dt, exp, sqexp, sqt, G, g, a, b):
-        fr = lambda x, y, vx, vy: - a*np.hypot(x, y)**3 + b*np.hypot(x, y)
+    def baoab_duplo(self, dt, exp, sqexp, sqt, G, a, b):
+        fr = lambda x, y, vx, vy: -a*np.hypot(x, y)**3 + b*np.hypot(x, y)
         fx = lambda x, y, vx, vy: fr(x, y, vx, vy)*(x/np.hypot(x, y))
         fy = lambda x, y, vx, vy: fr(x, y, vx, vy)*(y/np.hypot(x, y))
 
@@ -89,12 +89,12 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
         pasta = 'BAOAB_livre'
         for ti in t:
             p1.baoab_livre(dt, exp, sqexp, sqt, G[ti])
-
+            '''
             track[0].append(p1.pos[0])
             track[1].append(p1.pos[1])
             track[2].append(p1.vel[0])
             track[3].append(p1.vel[1])
-
+            '''
             # MSD
             if cont < tmax:
                 r0, dr, switch = p1.msd(r0, dr, switch)
@@ -108,7 +108,7 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     else:
         pasta = 'BAOAB_duplo'
         for ti in t:
-            p1.baoab_duplo(dt, exp, sqexp, sqt, G[ti], g, a, b)
+            p1.baoab_duplo(dt, exp, sqexp, sqt, G[ti], a, b)
             track[0].append(p1.pos[0])
             track[1].append(p1.pos[1])
             track[2].append(p1.vel[0])
@@ -147,12 +147,12 @@ vy0 = 0
 dt = 0.01
 tf = 10
 passos = int(tf/dt)
-g = 10
+g = 1
 a = 0.25
 b = 1
 T = 1
 cic = 100
-POT = 'Livre' #'Duplo'
+POT = 'Duplo' #'Livre'
 
 dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT=POT)
 

@@ -9,12 +9,12 @@ start = time()
 #*-*-*-**-Definições-*-*-*-*
 dt = 0.01
 tf = 10
-g = 10
+g = 1
 a = 0.25
 b = 1
 T = 1
 cic = 100
-POT = 'Livre'
+POT = 'Duplo'
 #-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 if POT == 'Livre':
@@ -90,7 +90,7 @@ def run_duplo(data):
     plt.xlim(-l, l)
     plt.ylim(-l, l)
     plt.title(f'Equação de Langevin para poço duplo radial: BAOAB\n' + r'$\gamma$ = ' + f'{g}' +
-              f' | T = {T} | passo = {c}')
+              f' | T = {T} '+r'$\Delta t = $'+f'{dt} | passo = {c:<4}')
 
 
 if POT == 'Livre':

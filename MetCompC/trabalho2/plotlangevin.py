@@ -6,7 +6,7 @@ import os
 #*-*-*-**-Definições-*-*-*-*
 dt = 0.01
 tf = 100000
-g = 0.5
+g = 0.1
 a = 0.25
 b = 1
 T = 1
@@ -24,17 +24,19 @@ msd = msd[1:-1]
 
 t = np.arange(dt, int(tf/cic), dt)
 
-D_num = sum(msd[300:]/(4*t[300:]))/len(t)
+sep = 1000
+delta = 500
+D_num = sum(msd[sep+delta:]/(4*t[sep+delta:]))/len(t[sep+delta:])
 
 msd = np.log10(msd)
 t = np.log10(t)
-results1 = sp.linregress(t[:300], msd[:300])
+results1 = sp.linregress(t[:sep], msd[:sep])
 a1 = results1.slope
 b1 = results1.intercept
 
 y1 = a1*t + b1
 
-results2 = sp.linregress(t[500:], msd[500:])
+results2 = sp.linregress(t[sep+delta:], msd[sep+delta:])
 a2 = results2.slope
 b2 = results2.intercept
 
