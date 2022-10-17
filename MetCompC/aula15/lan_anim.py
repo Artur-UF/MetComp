@@ -9,17 +9,18 @@ start = time()
 #*-*-*-**-Definições-*-*-*-*
 dt = 0.01
 tf = 10
-g = 0.5
+g = 10
 a = 0.25
 b = 1
 T = 1
-POT = 'Duplo'
+cic = 100
+POT = 'Livre'
 #-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 if POT == 'Livre':
-    path = os.path.join(os.getcwd(), 'BAOAB_livre')
+    path = os.path.join(os.getcwd(), f'BAOAB_livre_g{g}T{T}tf{tf}')
 else:
-    path = os.path.join(os.getcwd(), 'BAOAB_duplo')
+    path = os.path.join(os.getcwd(), f'BAOAB_duplo_g{g}T{T}tf{tf}')
 track = np.load(path+f'/langevin_g{g}T{T}tf{tf}.npy')
 
 
@@ -49,7 +50,7 @@ def run_livre(data):
     Roda a animação com os dados fornecidos por 'data'
     '''
     x, y, vx, vy, ti, c = data
-    global track, g, T
+    global track, g, T, dt
     l = 10
     r = 0.3
     plt.cla()
@@ -61,10 +62,10 @@ def run_livre(data):
     plt.plot(track[0][:c], track[1][:c], 'r', linewidth=1)
     plt.ylabel('y')
     plt.xlabel('x')
-    plt.xlim(-l, l)
-    plt.ylim(-l, l)
+    plt.xlim(0, 6)
+    plt.ylim(-4, 2)
     plt.title(f'Equação de Langevin para Partícula Livre: BAOAB\n' + r'$\gamma$ = ' + f'{g}' +
-              f' | T = {T} | passo = {c}')
+              f' | T = {T} | dt = {dt} | passo = {c:<4}')
 
 
 def run_duplo(data):
@@ -94,10 +95,14 @@ def run_duplo(data):
 
 if POT == 'Livre':
     ani = animation.FuncAnimation(fig, run_livre, gen, interval=20, init_func=init, save_count=1500, blit=True)
+    #writergif = animation.PillowWriter(fps=24)
+    #ani.save(path+f'/livre_g{g}T{T}.gif', writer=writergif, dpi=300)
     FFwriter = animation.FFMpegWriter(fps=24, bitrate=-1)
-    ani.save(path+f'/livre_g{g}T{T}.mp4', writer=FFwriter, dpi=300)
+    ani.save(path + f'/livre_g{g}T{T}.mp4', writer=FFwriter, dpi=300)
 else:
     ani = animation.FuncAnimation(fig, run_duplo, gen, interval=20, init_func=init, save_count=1500, blit=True)
+    #writergif = animation.PillowWriter(fps=24, bitrate=-1)
+    #ani.save(path+f'/duplo_g{g}T{T}.gif', writer=writergif, dpi=300)
     FFwriter = animation.FFMpegWriter(fps=24, bitrate=-1)
     ani.save(path + f'/duplo_g{g}T{T}.mp4', writer=FFwriter, dpi=300)
 

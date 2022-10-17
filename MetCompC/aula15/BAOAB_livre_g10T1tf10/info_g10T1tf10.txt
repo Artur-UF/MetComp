@@ -1,0 +1,11 @@
+dt = 0.01
+tf = 10
+g = 10
+a = 0.25
+b = 1
+T = 1
+cic = 100
+POT = 'Livre'
+Seed = 420
+Passos = 1000
+Tempo de execução = 0.010s

@@ -1,7 +1,7 @@
 import numpy as np
 from time import time
 import os
-seed = 666
+seed = 420
 np.random.seed(seed)
 
 
@@ -89,6 +89,7 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
         pasta = 'BAOAB_livre'
         for ti in t:
             p1.baoab_livre(dt, exp, sqexp, sqt, G[ti])
+
             track[0].append(p1.pos[0])
             track[1].append(p1.pos[1])
             track[2].append(p1.vel[0])
@@ -122,7 +123,7 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     except FileExistsError:
         pass
 
-    #np.save(path+f'/langevin_g{g}T{T}tf{tf}.npy', track)
+    np.save(path+f'/langevin_g{g}T{T}tf{tf}.npy', track)
     np.save(path+f'/msd_g{g}T{T}tf{tf}.npy', arrmsd)
 
     ark = open(path+f'/info_g{g}T{T}tf{tf}.txt', 'w')
@@ -144,9 +145,9 @@ y0 = 0
 vx0 = 0
 vy0 = 0
 dt = 0.01
-tf = 100000
-passos = int(tf/dt)  # Numerador é o tempo final
-g = 100
+tf = 10
+passos = int(tf/dt)
+g = 10
 a = 0.25
 b = 1
 T = 1
