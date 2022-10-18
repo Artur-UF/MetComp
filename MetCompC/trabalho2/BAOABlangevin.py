@@ -20,7 +20,7 @@ class Particle:
         '''
         dt: discretização do tempo
         exp: termo referente a primeira exponencial da eq.3
-        spexp: termo da raiz quadrada com exponencial da eq.3
+        sqexp: termo da raiz quadrada com exponencial da eq.3
         sqt: termo da raiz quadrada com a Temperatura da eq.3
         G: o vetor G da eq.3
         '''
@@ -61,16 +61,16 @@ class Particle:
         self.vel[0] += fxx*(dt/2)
         self.vel[1] += fyy*(dt/2)
 
-    def msd(self, r0, dr, switch):  # Essa é uma medição para n partículas né?
+    def msd(self, r0, dr, switch):
         if switch == 0:
             r0 = [self.pos[0], self.pos[1]]   # Posição de referência nesse ciclo
             dr = 0                            # Desvio no tempo de referência 0
             switch = 1
             return r0, dr, switch
         if switch == 1:
-            dx = self.pos[0] - r0[0]        # Desvio em x
-            dy = self.pos[1] - r0[1]    # Desvio em y
-            dr = dx**2 + dy**2          # Desvio quadrático
+            dx = self.pos[0] - r0[0]          # Desvio em x
+            dy = self.pos[1] - r0[1]          # Desvio em y
+            dr = dx**2 + dy**2                # Desvio quadrático
             return r0, dr, switch
 
 
@@ -79,14 +79,14 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     p1 = Particle([x0, y0], [vx0, vy0])
 
     t = np.arange(passos)
-
+    # Parâmetros necessários para a função 'baoab_'
     G = np.random.randn(passos, 2)
     exp = np.exp(-g*dt)
     sqexp = np.sqrt(1-np.exp(-2*g*dt))
     sqt = np.sqrt(T)
-    track = [[], [], [], []]
+    #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-    # MSD
+    # MSD - parâmetros necessários
     ciclos = cic
     cat = 1
     tmax = int(passos/ciclos)
@@ -95,6 +95,10 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     dr = 0
     switch = 0
     arrmsd = np.zeros(tmax+1)
+    #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+    # Loop temporal
+    track = [[], [], [], []]
     if POT == 'Livre':
         pasta = 'BAOAB_livre'
         for ti in t:
@@ -114,7 +118,6 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
                 cat += 1
                 switch = 0
                 cont = 0
-
     else:
         pasta = 'BAOAB_duplo'
         for ti in t:
@@ -133,10 +136,11 @@ def dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT='Livre'):
     except FileExistsError:
         pass
 
-    # Aqui são salvos os arrays de MSD e o rastreador
+    # Aqui são salvos os arrays de MSD e o rastreador (track)
     np.save(path+f'/langevin_g{g}T{T}tf{tf}.npy', track)
     np.save(path+f'/msd_g{g}T{T}tf{tf}.npy', arrmsd)
 
+    # Escrita do .txt de informações
     ark = open(path+f'/info_g{g}T{T}tf{tf}.txt', 'w')
     ark.write(f'dt = {dt}\n'
               f'tf = {tf}\n'
