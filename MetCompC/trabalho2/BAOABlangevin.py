@@ -168,6 +168,7 @@ b = 1
 T = 1
 cic = 100
 POT = 'Duplo' #'Livre'
+# #Duplo se refere ao poço duplo radial e Livre à partícula livre
 #-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 dinmol(x0, y0, vx0, vy0, passos, dt, g, a, b, T, cic, POT=POT)

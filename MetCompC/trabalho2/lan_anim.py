@@ -18,6 +18,8 @@ cic = 100
 POT = 'Duplo'
 #-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
+#Cuidado com os limites dos gráficos em plt.xlim e plt.ylim
+
 if POT == 'Livre':
     path = os.path.join(os.getcwd(), f'BAOAB_livre_g{g}T{T}tf{tf}')
 else:
